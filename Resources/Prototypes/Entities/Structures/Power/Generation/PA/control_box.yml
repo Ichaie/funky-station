@@ -46,6 +46,7 @@
     layoutId: ParticleAccelerator
   - type: AccessReader
     access: [["Engineering"]]
+  - type: StationAiWhitelist
 
 # Unfinished
 

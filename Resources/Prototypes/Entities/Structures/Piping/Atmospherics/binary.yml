@@ -131,6 +131,7 @@
   - type: GuideHelp
     guides:
     - Pumps
+  - type: StationAiWhitelist
 
 - type: entity
   parent: GasBinaryBase
@@ -198,9 +199,7 @@
     - type: WiredNetworkConnection
     - type: AtmosMonitoringConsoleDevice
       navMapBlip: GasFlowRegulator
-    - type: GuideHelp
-      guides:
-      - Pumps
+    - type: StationAiWhitelist
 
 - type: entity
   parent: GasBinaryBase

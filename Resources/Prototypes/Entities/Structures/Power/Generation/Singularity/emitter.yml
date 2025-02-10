@@ -136,3 +136,4 @@
       - On
       - Off
       - Toggle
+  - type: StationAiWhitelist
