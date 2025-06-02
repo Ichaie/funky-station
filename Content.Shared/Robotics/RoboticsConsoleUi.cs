@@ -159,7 +159,6 @@ public partial record struct CyborgControlData
         ModuleCount = moduleCount;
         HasBrain = hasBrain;
         CanDisable = canDisable;
-        Emagged = emagged;
         IsAiControllable = isAiControllable; // Corvax-Next-AiRemoteControl
     }
 }
