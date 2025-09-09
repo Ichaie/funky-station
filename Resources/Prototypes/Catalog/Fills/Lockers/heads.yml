@@ -414,7 +414,6 @@
     - id: RadioHandheldCommand #funkystation
     - id: StationAiUploadCircuitboard
     - id: AsimovCircuitBoard
-    - id: AugustineCircuitBoard
     - id: CrewsimovCircuitBoard
 
 # Hardsuit table, used for suit storage as well
