@@ -16,6 +16,8 @@
 // SPDX-FileCopyrightText: 2024 Simon <63975668+Simyon264@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2024 Tadeo <td12233a@gmail.com>
 // SPDX-FileCopyrightText: 2024 metalgearsloth <31366439+metalgearsloth@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2025 Ichaie <ichaicoelho@gmail.com>
+// SPDX-FileCopyrightText: 2025 ImHoks <142083149+ImHoks@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2025 Tay <td12233a@gmail.com>
 // SPDX-FileCopyrightText: 2025 slarticodefast <161409025+slarticodefast@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2025 taydeo <td12233a@gmail.com>
@@ -28,6 +30,7 @@ using Content.Server.Chat.Managers;
 using Content.Server.Radio.Components;
 using Content.Server.Roles;
 using Content.Server.Station.Systems;
+using Content.Shared._CorvaxNext.Silicons.Borgs.Components; // Corvax-Next-AiRemoteControl
 using Content.Shared.Administration;
 using Content.Shared.Chat;
 using Content.Shared.Emag.Systems;
@@ -37,6 +40,8 @@ using Content.Shared.Mind.Components;
 using Content.Shared.Roles;
 using Content.Shared.Silicons.Laws;
 using Content.Shared.Silicons.Laws.Components;
+using Content.Shared.Silicons.StationAi; // Corvax-Next-AiRemoteControl
+using Content.Shared.Tag; // Corvax-Next-AiRemoteControl
 using Content.Shared.Wires;
 using Robust.Server.GameObjects;
 using Robust.Shared.Audio;
@@ -57,6 +62,7 @@ public sealed class SiliconLawSystem : SharedSiliconLawSystem
     [Dependency] private readonly StationSystem _station = default!;
     [Dependency] private readonly UserInterfaceSystem _userInterface = default!;
     [Dependency] private readonly EmagSystem _emag = default!;
+    [Dependency] private readonly TagSystem _tagSystem = default!; // Corvax-Next-AiRemoteControl
 
     /// <inheritdoc/>
     public override void Initialize()
@@ -85,6 +91,12 @@ public sealed class SiliconLawSystem : SharedSiliconLawSystem
     {
         if (!TryComp<ActorComponent>(uid, out var actor))
             return;
+
+        // Corvax-Next-AiRemoteControl-Start
+        if (HasComp<AiRemoteControllerComponent>(uid)
+            || _tagSystem.HasTag(uid, "StationAi")) // skip a law's notification for remotable and AI
+            return;
+        // Corvax-Next-AiRemoteControl-End
 
         var msg = Loc.GetString("laws-notify");
         var wrappedMessage = Loc.GetString("chat-manager-server-wrap-message", ("message", msg));
@@ -177,6 +189,11 @@ public sealed class SiliconLawSystem : SharedSiliconLawSystem
     {
         if (component.Lawset == null)
             component.Lawset = GetLawset(component.Laws);
+
+        // Corvax-Next-AiRemoteControl-Start
+        if (HasComp<AiRemoteControllerComponent>(uid)) // You can't emag controllable entities
+            return;
+        // Corvax-Next-AiRemoteControl-End
 
         // Show the silicon has been subverted.
         component.Subverted = true;
@@ -328,8 +345,30 @@ public sealed class SiliconLawSystem : SharedSiliconLawSystem
         while (query.MoveNext(out var update))
         {
             SetLaws(lawset, update, provider.LawUploadSound);
+
+            // Corvax-Next-AiRemoteControl-Start
+            if (TryComp<StationAiHeldComponent>(update, out var stationAiHeldComp)
+                && stationAiHeldComp.CurrentConnectedEntity != null
+                && HasComp<SiliconLawProviderComponent>(stationAiHeldComp.CurrentConnectedEntity))
+            {
+                SetLaws(lawset, stationAiHeldComp.CurrentConnectedEntity.Value, provider.LawUploadSound);
+            }
+            // Corvax-Next-AiRemoteControl-End
         }
     }
+
+    // Corvax-Next-AiRemoteControl-Start
+    public void SetLawsSilent(List<SiliconLaw> newLaws, EntityUid target, SoundSpecifier? cue = null)
+    {
+        if (!TryComp<SiliconLawProviderComponent>(target, out var component))
+            return;
+
+        if (component.Lawset == null)
+            component.Lawset = new SiliconLawset();
+
+        component.Lawset.Laws = newLaws;
+    }
+    // Corvax-Next-AiRemoteControl-End
 }
 
 [ToolshedCommand, AdminCommand(AdminFlags.Admin)]

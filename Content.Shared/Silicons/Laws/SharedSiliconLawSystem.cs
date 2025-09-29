@@ -4,6 +4,7 @@
 // SPDX-FileCopyrightText: 2024 Piras314 <p1r4s@proton.me>
 // SPDX-FileCopyrightText: 2024 Tadeo <td12233a@gmail.com>
 // SPDX-FileCopyrightText: 2024 metalgearsloth <31366439+metalgearsloth@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2025 ImHoks <142083149+ImHoks@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2025 Tay <td12233a@gmail.com>
 // SPDX-FileCopyrightText: 2025 slarticodefast <161409025+slarticodefast@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2025 taydeo <td12233a@gmail.com>
@@ -17,6 +18,7 @@ using Content.Shared.Silicons.Laws.Components;
 using Content.Shared.Stunnable;
 using Content.Shared.Wires;
 using Robust.Shared.Audio;
+using Content.Shared._CorvaxNext.Silicons.Borgs.Components;
 
 namespace Content.Shared.Silicons.Laws;
 
@@ -44,6 +46,11 @@ public abstract partial class SharedSiliconLawSystem : EntitySystem
 
         if (_emag.CheckFlag(uid, EmagType.Interaction))
             return;
+
+        // Corvax-Next-AiRemoteControl-Start
+        if (HasComp<AiRemoteControllerComponent>(uid))
+            return;
+        // Corvax-Next-AiRemoteControl-End
 
         // prevent self-emagging
         if (uid == args.UserUid)

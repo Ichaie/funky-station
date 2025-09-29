@@ -4,6 +4,7 @@
 // SPDX-FileCopyrightText: 2024 Winkarst <74284083+Winkarst-cpu@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2024 deltanedas <39013340+deltanedas@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2024 metalgearsloth <31366439+metalgearsloth@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2025 ImHoks <142083149+ImHoks@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2025 taydeo <td12233a@gmail.com>
 //
 // SPDX-License-Identifier: MIT
@@ -86,6 +87,16 @@ public sealed partial class RoboticsConsoleWindow : FancyWindow
         // clear invalid selection
         if (_selected is {} selected && !_cyborgs.ContainsKey(selected))
             _selected = null;
+
+        // Corvax-Next-AiRemoteControl-Start
+        var isAiControllable = false;
+
+        if (_selected != null)
+        {
+            _cyborgs.TryGetValue(_selected, out var data);
+            isAiControllable = data.IsAiControllable;
+        }
+        // Corvax-Next-AiRemoteControl-End
 
         var hasCyborgs = _cyborgs.Count > 0;
         NoCyborgs.Visible = !hasCyborgs;
